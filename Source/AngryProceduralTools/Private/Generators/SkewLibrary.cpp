@@ -96,7 +96,7 @@ void USkewLibrary::GenerateSkew(
 	int32 LOD,
 	UStaticMesh* StaticMesh,
 	FSkewParams Skew,
-	TArray<FTriangleMesh>& Meshes)
+	TArray<FGenTriangleMesh>& Meshes)
 {
 	const FMatrix Transform = FMatrix(
 		FPlane(Skew.Scale.X, Skew.XSkew.X, Skew.XSkew.Y, Skew.Offset.X),
@@ -114,7 +114,7 @@ void USkewLibrary::GenerateSkew(
 
 			for (int32 SectionIndex = 0; SectionIndex < NumSections; SectionIndex++)
 			{
-				FTriangleMesh& Mesh = Meshes[SectionIndex];
+				FGenTriangleMesh& Mesh = Meshes[SectionIndex];
 
 				// Buffers for copying geom data
 				TArray<FVector> Vertices;
@@ -148,7 +148,7 @@ void USkewLibrary::GenerateSkew(
 
 				for (int32 Index = 0; Index < TriangleNum; Index++)
 				{
-					FTriangle& Triangle = Mesh.Triangulation.Triangles[Index];
+					FGenTriangle& Triangle = Mesh.Triangulation.Triangles[Index];
 					Triangle.Verts[0] = Triangles[Index * 3 + 0];
 					Triangle.Verts[1] = Triangles[Index * 3 + 1];
 					Triangle.Verts[2] = Triangles[Index * 3 + 2];
@@ -161,7 +161,7 @@ void USkewLibrary::GenerateSkew(
 			if (BodySetup != nullptr)
 			{
 				// Just shove everything into the first mesh
-				FTriangleMesh& Mesh = Meshes[0];
+				FGenTriangleMesh& Mesh = Meshes[0];
 
 				// Iterate over all convex hulls on static mesh..
 				const int32 NumConvex = BodySetup->AggGeom.ConvexElems.Num();
@@ -187,7 +187,7 @@ void USkewLibrary::GenerateSkew(
 			{
 				if (Meshes.IsValidIndex(MatIndex))
 				{
-					FTriangleMesh& Mesh = Meshes[MatIndex];
+					FGenTriangleMesh& Mesh = Meshes[MatIndex];
 					Mesh.Material = StaticMesh->GetMaterial(MatIndex);
 				}
 			}

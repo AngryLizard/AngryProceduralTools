@@ -150,14 +150,14 @@ float UProceduralLibrary::GetMinPointDistance(USplineComponent* Left, USplineCom
 }
 
 
-FTriangleMesh UProceduralLibrary::CombineMesheSection(const FTriangleMesh& Mesh, const FTriangleMesh& Other)
+FGenTriangleMesh UProceduralLibrary::CombineMesheSection(const FGenTriangleMesh& Mesh, const FGenTriangleMesh& Other)
 {
-	FTriangleMesh Output = Mesh;
+	FGenTriangleMesh Output = Mesh;
 
 	const int32 VertexNum = Mesh.Triangulation.Points.Num();
 	const int32 TriangleNum = Mesh.Triangulation.Triangles.Num();
-	TArray<FTriangle> Triangles = Other.Triangulation.Triangles;
-	for (FTriangle& Triangle : Triangles)
+	TArray<FGenTriangle> Triangles = Other.Triangulation.Triangles;
+	for (FGenTriangle& Triangle : Triangles)
 	{
 		Triangle.Verts[0] += VertexNum;
 		Triangle.Verts[1] += VertexNum;
@@ -173,18 +173,18 @@ FTriangleMesh UProceduralLibrary::CombineMesheSection(const FTriangleMesh& Mesh,
 	return Output;
 }
 
-TArray<FTriangleMesh> UProceduralLibrary::CombineMeshes(const TArray<FTriangleMesh>& Meshes, const TArray<FTriangleMesh>& Other)
+TArray<FGenTriangleMesh> UProceduralLibrary::CombineMeshes(const TArray<FGenTriangleMesh>& Meshes, const TArray<FGenTriangleMesh>& Other)
 {
-	TArray<FTriangleMesh> Output;
+	TArray<FGenTriangleMesh> Output;
 	Output.Append(Meshes);
 	Output.Append(Other);
 	return Output;
 }
 
-TArray<FTriangleMesh> UProceduralLibrary::MergeMaterials(const TArray<FTriangleMesh>& Meshes)
+TArray<FGenTriangleMesh> UProceduralLibrary::MergeMaterials(const TArray<FGenTriangleMesh>& Meshes)
 {
-	TArray<FTriangleMesh> Output;
-	TArray<FTriangleMesh> Tmp = Meshes;
+	TArray<FGenTriangleMesh> Output;
+	TArray<FGenTriangleMesh> Tmp = Meshes;
 
 	int32 Num = Tmp.Num();
 	for (int32 Index = 0; Index < Num; Index++)
@@ -254,7 +254,7 @@ void UProceduralLibrary::PopulateInstancedMesh(UInstancedStaticMeshComponent* Co
 }
 
 
-void UProceduralLibrary::ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh, const TArray<FTriangleMesh>& Meshes, bool EnableCollision)
+void UProceduralLibrary::ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh, const TArray<FGenTriangleMesh>& Meshes, bool EnableCollision)
 {
 	if (IsValid(ProceduralMesh))
 	{
@@ -265,10 +265,10 @@ void UProceduralLibrary::ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh,
 		const int32 MeshNum = Meshes.Num();
 		for (int32 Index = 0; Index < MeshNum; Index++)
 		{
-			const FTriangleMesh& Mesh = Meshes[Index];
+			const FGenTriangleMesh& Mesh = Meshes[Index];
 
 			bool HasConvex = false;
-			for (const FConvexMesh& Convex : Mesh.Convex)
+			for (const FGenConvexMesh& Convex : Mesh.Convex)
 			{
 				if (Convex.Points.Num() >= 4)
 				{
@@ -279,7 +279,7 @@ void UProceduralLibrary::ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh,
 
 			// Convert into mesh
 			TArray<int32> Faces;
-			for (const FTriangle& Triangle : Mesh.Triangulation.Triangles)
+			for (const FGenTriangle& Triangle : Mesh.Triangulation.Triangles)
 			{
 				if (Triangle.Enabled)
 				{
@@ -291,7 +291,7 @@ void UProceduralLibrary::ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh,
 			TArray<FVector2D> UVs;
 			TArray<FColor> Colors;
 			TArray<FProcMeshTangent> Tangents;
-			for (const FTriangleVertex& Vertex : Mesh.Vertices)
+			for (const FGenTriangleVertex& Vertex : Mesh.Vertices)
 			{
 				Normals.Emplace(Vertex.Normal);
 				UVs.Emplace(Vertex.UV);

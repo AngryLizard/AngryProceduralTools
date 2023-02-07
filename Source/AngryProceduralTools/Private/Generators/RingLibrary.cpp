@@ -22,7 +22,7 @@ void URingLibrary::GenerateRing(
 	FRingShapeParams Shape,
 	FRingMaterialParams Material,
 
-	TArray<FTriangleMesh>& Meshes)
+	TArray<FGenTriangleMesh>& Meshes)
 {
 	if (IsValid(Direction))
 	{
@@ -34,7 +34,7 @@ void URingLibrary::GenerateRing(
 		const FVector2D Boundary = FVector2D(Shape.Radius + Shape.Girth) * 2;
 
 		// Create vertices
-		FTriangleMesh TriangleMesh;
+		FGenTriangleMesh TriangleMesh;
 		for (int32 Index = 0; Index <= Shape.Segments; Index++)
 		{
 			const float Ratio = ((float)Index) / Shape.Segments;
@@ -57,7 +57,7 @@ void URingLibrary::GenerateRing(
 			const FVector Normal = (U ^ Tangent).GetSafeNormal();
 
 			// Inner vertex
-			FTriangleVertex AV;
+			FGenTriangleVertex AV;
 			const FVector VertexProject = Transform.InverseTransformVectorNoScale(Project);
 			if (Material.ProjectUV)
 			{
@@ -74,7 +74,7 @@ void URingLibrary::GenerateRing(
 			TriangleMesh.Vertices.Emplace(AV);
 
 			// Outer vertex
-			FTriangleVertex BV;
+			FGenTriangleVertex BV;
 			if (Material.ProjectUV)
 			{
 				BV.UV = Material.Material.Transform(UProceduralLibrary::ProjectUV(BP, VertexProject, Boundary), Boundary);
@@ -92,12 +92,12 @@ void URingLibrary::GenerateRing(
 
 		// Wrap around
 		TriangleMesh.Triangulation.Points.Emplace(TriangleMesh.Triangulation.Points[0]);
-		FTriangleVertex AV = TriangleMesh.Vertices[0];
+		FGenTriangleVertex AV = TriangleMesh.Vertices[0];
 		AV.UV = Material.Material.Transform(FVector2D(1.0f, 0.0f), Bounds);
 		TriangleMesh.Vertices.Emplace(AV);
 
 		TriangleMesh.Triangulation.Points.Emplace(TriangleMesh.Triangulation.Points[1]);
-		FTriangleVertex BV = TriangleMesh.Vertices[1];
+		FGenTriangleVertex BV = TriangleMesh.Vertices[1];
 		BV.UV = Material.Material.Transform(FVector2D(1.0f, 1.0f), Bounds);
 		TriangleMesh.Vertices.Emplace(BV);
 
@@ -106,8 +106,8 @@ void URingLibrary::GenerateRing(
 		{
 			const int32 I = 2 * (Index);
 			const int32 J = 2 * (Index + 1);
-			TriangleMesh.Triangulation.Triangles.Emplace(FTriangle(I, J, J + 1));
-			TriangleMesh.Triangulation.Triangles.Emplace(FTriangle(I, J + 1, I + 1));
+			TriangleMesh.Triangulation.Triangles.Emplace(FGenTriangle(I, J, J + 1));
+			TriangleMesh.Triangulation.Triangles.Emplace(FGenTriangle(I, J + 1, I + 1));
 		}
 
 		TriangleMesh.Material = Material.Material.Material;

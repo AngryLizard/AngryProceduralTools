@@ -44,8 +44,10 @@ public class AngryProceduralToolsEditor : ModuleRules
 				"AssetRegistry",
 				"TextureEditor",
 				"InputCore",
-				
-				"AngryUtility",
+                "PlacementMode",
+
+
+                "AngryUtility",
 				"AngryProceduralTools",
 			});
 		

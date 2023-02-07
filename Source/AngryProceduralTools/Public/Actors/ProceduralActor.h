@@ -33,8 +33,8 @@ public:
 
 	/** Generate a mesh for a given LOD and procedural mesh transform */
 	UFUNCTION(BlueprintNativeEvent, CallInEditor, Category = "Procedural Mesh", Meta = (Keywords = "C++"))
-		TArray<FTriangleMesh> GenerateMesh(const FTransform& Transform, int32 LOD) const;
-	virtual TArray<FTriangleMesh> GenerateMesh_Implementation(const FTransform& Transform, int32 LOD) const;
+		TArray<FGenTriangleMesh> GenerateMesh(const FTransform& Transform, int32 LOD) const;
+	virtual TArray<FGenTriangleMesh> GenerateMesh_Implementation(const FTransform& Transform, int32 LOD) const;
 
 	////////////////////////////////////////////// COMPONENTS //////////////////////////////////////////////////////
 private:

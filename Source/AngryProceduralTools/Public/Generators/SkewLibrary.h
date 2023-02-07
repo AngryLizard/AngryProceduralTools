@@ -47,7 +47,7 @@ public:
 			UStaticMesh* StaticMesh,
 			FSkewParams Skew,
 
-			TArray<FTriangleMesh>& Meshes);
+			TArray<FGenTriangleMesh>& Meshes);
 
 };
 

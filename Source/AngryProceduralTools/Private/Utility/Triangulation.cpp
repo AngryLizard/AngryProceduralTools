@@ -2,34 +2,34 @@
 #include "Utility/TriangleMath.h"
 #include "DrawDebugHelpers.h"
 
-FTriangleEdge::FTriangleEdge()
+FGenTriangleEdge::FGenTriangleEdge()
 : T(INDEX_NONE), E(INDEX_NONE)
 {
 }
 
-FTriangleEdge::FTriangleEdge(int32 T, int32 E)
+FGenTriangleEdge::FGenTriangleEdge(int32 T, int32 E)
 	: T(T), E(E)
 {
 
 }
 
-FTriangleEdge::FTriangleEdge(const FTriangleEdge& Other)
+FGenTriangleEdge::FGenTriangleEdge(const FGenTriangleEdge& Other)
 	: T(Other.T), E(Other.E)
 {
 }
 
 
-FConvex::FConvex()
+FGenConvex::FGenConvex()
 {
 }
 
-FConvex::FConvex(int32 A, int32 B)
+FGenConvex::FGenConvex(int32 A, int32 B)
 {
 	Vertices.Append({A, B});
 }
 
 
-FTriangle::FTriangle()
+FGenTriangle::FGenTriangle()
 	: Enabled(true)
 {
 	Verts[0] = INDEX_NONE;
@@ -40,7 +40,7 @@ FTriangle::FTriangle()
 	Adjs[2] = INDEX_NONE;
 }
 
-FTriangle::FTriangle(int32 A, int32 B, int32 C)
+FGenTriangle::FGenTriangle(int32 A, int32 B, int32 C)
 	: Enabled(true)
 {
 	Verts[0] = A;
@@ -51,7 +51,7 @@ FTriangle::FTriangle(int32 A, int32 B, int32 C)
 	Adjs[2] = INDEX_NONE;
 }
 
-FTriangle::FTriangle(const FTriangle& Other)
+FGenTriangle::FGenTriangle(const FGenTriangle& Other)
 	: Enabled(Other.Enabled)
 {
 	Verts[0] = Other.Verts[0];
@@ -62,19 +62,19 @@ FTriangle::FTriangle(const FTriangle& Other)
 	Adjs[2] = Other.Adjs[2];
 }
 
-void FTriangle::ClearAdjs()
+void FGenTriangle::ClearAdjs()
 {
 	Adjs[0] = INDEX_NONE;
 	Adjs[1] = INDEX_NONE;
 	Adjs[2] = INDEX_NONE;
 }
 
-bool FTriangle::HasVertex(int32 Vertex) const
+bool FGenTriangle::HasVertex(int32 Vertex) const
 {
 	return Verts[0] == Vertex || Verts[1] == Vertex || Verts[2] == Vertex;
 }
 
-void FTriangle::ReplaceAdj(int32 From, int32 To)
+void FGenTriangle::ReplaceAdj(int32 From, int32 To)
 {
 	for (int32& Adj : Adjs)
 	{
@@ -86,7 +86,7 @@ void FTriangle::ReplaceAdj(int32 From, int32 To)
 	}
 }
 
-int32 FTriangle::OppositeOf(const FTriangle& Other) const
+int32 FGenTriangle::OppositeOf(const FGenTriangle& Other) const
 {
 	for (int32 VertIndex = 0; VertIndex < 3; VertIndex++)
 	{
@@ -99,7 +99,7 @@ int32 FTriangle::OppositeOf(const FTriangle& Other) const
 	return INDEX_NONE;
 }
 
-bool FTriangle::IsConnected(const FTriangle& Other) const
+bool FGenTriangle::IsConnected(const FGenTriangle& Other) const
 {
 	int32 Count = 0;
 	for (int32 VertIndex = 0; VertIndex < 3; VertIndex++)
@@ -121,7 +121,7 @@ void FTriangulation::Reparent(const TArray<int32>& TriangleIndices)
 	TArray<int32> Neighbours;
 	for (int32 TriangleIndex : TriangleIndices)
 	{
-		FTriangle& Triangle = Triangles[TriangleIndex];
+		FGenTriangle& Triangle = Triangles[TriangleIndex];
 
 		if (Triangles.IsValidIndex(Triangle.Adjs[0])) Neighbours.AddUnique(Triangle.Adjs[0]);
 		if (Triangles.IsValidIndex(Triangle.Adjs[1])) Neighbours.AddUnique(Triangle.Adjs[1]);
@@ -132,10 +132,10 @@ void FTriangulation::Reparent(const TArray<int32>& TriangleIndices)
 
 	for (int32 MineIndex : Neighbours)
 	{
-		FTriangle& Mine = Triangles[MineIndex];
+		FGenTriangle& Mine = Triangles[MineIndex];
 		for (int32 YourIndex : Neighbours)
 		{
-			FTriangle& Your = Triangles[YourIndex];
+			FGenTriangle& Your = Triangles[YourIndex];
 			if (Your.IsConnected(Mine))
 			{
 				Your.Adjs[Your.OppositeOf(Mine)] = MineIndex;
@@ -151,7 +151,7 @@ void FTriangulation::Reparent(const TArray<int32>& TriangleIndices)
 
 void FTriangulation3D::DrawTriangles(UWorld* World, const FTransform& Transform)
 {
-	for (const FTriangle& Mine : Triangles)
+	for (const FGenTriangle& Mine : Triangles)
 	{
 		FVector Center = FVector::ZeroVector;
 		for (int32 Vert : Mine.Verts)
@@ -164,7 +164,7 @@ void FTriangulation3D::DrawTriangles(UWorld* World, const FTransform& Transform)
 			int32 Adj = Mine.Adjs[Edge];
 			if (Triangles.IsValidIndex(Adj))
 			{
-				const FTriangle& Your = Triangles[Adj];
+				const FGenTriangle& Your = Triangles[Adj];
 
 				FVector Target = FVector::ZeroVector;
 				for (int32 Vert : Your.Verts)
@@ -191,7 +191,7 @@ void FTriangulation3D::DrawTriangles(UWorld* World, const FTransform& Transform)
 
 void FTriangulation3D::Circumcenter(int32 Index, FVector& Center, float& Radius) const
 {
-	const FTriangle& Triangle = Triangles[Index];
+	const FGenTriangle& Triangle = Triangles[Index];
 
 	const FVector A = Points[Triangle.Verts[0]];
 	const FVector B = Points[Triangle.Verts[1]];
@@ -213,7 +213,7 @@ bool FTriangulation3D::FixTriangles(int32 MaxIterations)
 		bool Changed = false;
 		for (int32 Index = 0; Index < Total; Index++)
 		{
-			FTriangle& Mine = Triangles[Index];
+			FGenTriangle& Mine = Triangles[Index];
 
 			const FVector A = Points[Mine.Verts[0]];
 			const FVector B = Points[Mine.Verts[1]];
@@ -226,7 +226,7 @@ bool FTriangulation3D::FixTriangles(int32 MaxIterations)
 			{
 				if (Triangles.IsValidIndex(Adj))
 				{
-					FTriangle& Your = Triangles[Adj];
+					FGenTriangle& Your = Triangles[Adj];
 
 					const int32 MineOpps = Mine.OppositeOf(Your);
 					const int32 YourOpps = Your.OppositeOf(Mine);
@@ -257,7 +257,7 @@ bool FTriangulation3D::FixTriangles(int32 MaxIterations)
 }
 
 
-FVector FTriangulation2D::ComputeArea(const FTriangle& Triangle) const
+FVector FTriangulation2D::ComputeArea(const FGenTriangle& Triangle) const
 {
 	const FVector2D& A = Points[Triangle.Verts[0]];
 	const FVector2D& B = Points[Triangle.Verts[1]];
@@ -270,7 +270,7 @@ FVector FTriangulation2D::ComputeArea(const FTriangle& Triangle) const
 	return	Out;
 }
 
-FVector FTriangulation2D::InsideCheck(const FTriangle& Triangle, const FVector2D& Point) const
+FVector FTriangulation2D::InsideCheck(const FGenTriangle& Triangle, const FVector2D& Point) const
 {
 	const FVector2D& A = Points[Triangle.Verts[0]];
 	const FVector2D& B = Points[Triangle.Verts[1]];
@@ -285,7 +285,7 @@ FVector FTriangulation2D::InsideCheck(const FTriangle& Triangle, const FVector2D
 
 void FTriangulation2D::Circumcenter(int32 Index, FVector2D& Center, float& Radius) const
 {
-	const FTriangle& Triangle = Triangles[Index];
+	const FGenTriangle& Triangle = Triangles[Index];
 
 	const FVector2D A = Points[Triangle.Verts[0]];
 	const FVector2D B = Points[Triangle.Verts[1]];
@@ -323,7 +323,7 @@ bool FTriangulation2D::FixTriangles(int32 MaxIterations)
 		{
 			if (MaxIterations-- == 0) return true;
 
-			FTriangle& Mine = Triangles[Index];
+			FGenTriangle& Mine = Triangles[Index];
 
 			const FVector2D& Circ = Centers[Index];
 			const float RR = Radius[Index];
@@ -333,7 +333,7 @@ bool FTriangulation2D::FixTriangles(int32 MaxIterations)
 				const int32 Adj = Mine.Adjs[MineEdge];
 				if (Triangles.IsValidIndex(Adj))
 				{
-					FTriangle& Your = Triangles[Adj];
+					FGenTriangle& Your = Triangles[Adj];
 
 					// Check whether inside circumcircle
 					const int32 YourEdge = Your.OppositeOf(Mine);
@@ -400,9 +400,9 @@ int32 FTriangulation2D::CutEdge(int32 TriangleIndex, int32 NeighbourIndex, int32
 	const int32 NextIndex = (Edge + 1) % 3;
 	const int32 PrevIndex = (Edge + 2) % 3;
 
-	FTriangle& Triangle = Triangles[TriangleIndex];
+	FGenTriangle& Triangle = Triangles[TriangleIndex];
 
-	FTriangle New(Triangle);
+	FGenTriangle New(Triangle);
 	New.Verts[NextIndex] = PointIndex;
 	Triangle.Verts[PrevIndex] = PointIndex;
 
@@ -414,7 +414,7 @@ int32 FTriangulation2D::FindTriangle(const FVector2D& Point) const
 	const int32 Num = Triangles.Num();
 	for (int32 Index = 0; Index < Num; Index++)
 	{
-		const FTriangle& Center = Triangles[Index];
+		const FGenTriangle& Center = Triangles[Index];
 		const FVector Area = ComputeArea(Center);
 		if (Area.SizeSquared() < SMALL_NUMBER)
 		{
@@ -437,10 +437,10 @@ int32 FTriangulation2D::FindTriangle(const FVector2D& Point) const
 void FTriangulation2D::SetBorders(const FVector2D& Min, const FVector2D& Max)
 {
 	Points.Append({ FVector2D(Min.X, Min.Y) , FVector2D(Max.X, Min.Y) , FVector2D(Min.X, Max.Y) , FVector2D(Max.X, Max.Y) });
-	FTriangle Left(1, 0, 2);
+	FGenTriangle Left(1, 0, 2);
 	Left.Adjs[1] = 1;
 
-	FTriangle Right(3, 1, 2);
+	FGenTriangle Right(3, 1, 2);
 	Right.Adjs[0] = 0;
 
 	Triangles.Append({ Left, Right });
@@ -451,7 +451,7 @@ void FTriangulation2D::AddPoints(const FVector2D& Point)
 	const int32 CenterIndex = FindTriangle(Point);
 	if (Triangles.IsValidIndex(CenterIndex))
 	{
-		FTriangle& Center = Triangles[CenterIndex];
+		FGenTriangle& Center = Triangles[CenterIndex];
 		const FVector Area = ComputeArea(Center);
 		const FVector Inside = InsideCheck(Center, Point);
 		const FVector Check = Inside * Area;
@@ -476,7 +476,7 @@ void FTriangulation2D::AddPoints(const FVector2D& Point)
 				const int32 OppIndex = Center.Adjs[Edge];
 				if (Triangles.IsValidIndex(OppIndex))
 				{
-					const FTriangle& Opp = Triangles[OppIndex];
+					const FGenTriangle& Opp = Triangles[OppIndex];
 					const int32 OppEdge = Opp.OppositeOf(Center);
 					const int32 OppNew = CutEdge(OppIndex, CenterIndex, OppEdge, PointIndex);
 					TriangleIndices.Append({ OppIndex, OppNew });
@@ -491,8 +491,8 @@ void FTriangulation2D::AddPoints(const FVector2D& Point)
 		}
 
 		// Hook up vertices and ajdacency lists
-		FTriangle Left(Center);
-		FTriangle Right(Center);
+		FGenTriangle Left(Center);
+		FGenTriangle Right(Center);
 
 		Center.Verts[0] = PointIndex;
 		Right.Verts[1] = PointIndex;
@@ -568,13 +568,13 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 		{
 			Points.Append({ P2, P0, P1 });
 		}
-		const int32 CT = Triangles.Emplace(FTriangle(0, 1, 2));
+		const int32 CT = Triangles.Emplace(FGenTriangle(0, 1, 2));
 
 		// Create convex hull
-		TArray<FTriangleEdge> Convex;
-		Convex.Emplace(FTriangleEdge(CT, 0));
-		Convex.Emplace(FTriangleEdge(CT, 1));
-		Convex.Emplace(FTriangleEdge(CT, 2));
+		TArray<FGenTriangleEdge> Convex;
+		Convex.Emplace(FGenTriangleEdge(CT, 0));
+		Convex.Emplace(FGenTriangleEdge(CT, 1));
+		Convex.Emplace(FGenTriangleEdge(CT, 2));
 
 		// Sort points away from circumcircle
 		FVector2D Circ;
@@ -593,7 +593,7 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 			for (int32 Index = 0; Index < Num; Index++)
 			{
 				// Get edge vector
-				const FTriangleEdge& Edge = Convex[Index];
+				const FGenTriangleEdge& Edge = Convex[Index];
 				const int32 Prev = Triangles[Edge.T].Verts[(Edge.E + 1) % 3];
 				const int32 Next = Triangles[Edge.T].Verts[(Edge.E + 2) % 3];
 
@@ -615,17 +615,17 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 			}
 
 			// Construct triangles
-			TArray<FTriangleEdge> NewConvex;
+			TArray<FGenTriangleEdge> NewConvex;
 			for (int32 Index = 0; Index < Num; Index++)
 			{
-				const FTriangleEdge& Edge = Convex[(Start + Index) % Num];
+				const FGenTriangleEdge& Edge = Convex[(Start + Index) % Num];
 				if (Index < Count)
 				{
 					// Chain new triangles
 					const int32 Prev = Triangles[Edge.T].Verts[(Edge.E + 1) % 3];
 					const int32 Next = Triangles[Edge.T].Verts[(Edge.E + 2) % 3];
 
-					FTriangle Triangle(Prev, PointIndex, Next);
+					FGenTriangle Triangle(Prev, PointIndex, Next);
 					Triangle.Adjs[0] = INDEX_NONE;
 					Triangle.Adjs[1] = Edge.T;
 					Triangle.Adjs[2] = INDEX_NONE;
@@ -635,7 +635,7 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 
 					if (Index == 0)
 					{
-						NewConvex.Emplace(FTriangleEdge(TriangleIndex, 2));
+						NewConvex.Emplace(FGenTriangleEdge(TriangleIndex, 2));
 					}
 					else
 					{
@@ -644,7 +644,7 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 
 					if (Index == Count-1)
 					{
-						NewConvex.Emplace(FTriangleEdge(TriangleIndex, 0));
+						NewConvex.Emplace(FGenTriangleEdge(TriangleIndex, 0));
 					}
 					else
 					{
@@ -664,7 +664,7 @@ void FTriangulation2D::QHull(TArray<FVector2D> Cloud, int32 Iterations)
 }
 
 
-FTriangleVertex::FTriangleVertex()
+FGenTriangleVertex::FGenTriangleVertex()
 	: Tangent(FVector::ZeroVector),
 	Normal(FVector::UpVector),
 	UV(FVector2D::ZeroVector),
@@ -673,16 +673,16 @@ FTriangleVertex::FTriangleVertex()
 
 }
 
-FConvexMesh::FConvexMesh()
+FGenConvexMesh::FGenConvexMesh()
 {
 }
 
-FConvexMesh::FConvexMesh(const TArray<FVector>& Points)
+FGenConvexMesh::FGenConvexMesh(const TArray<FVector>& Points)
 	: Points(Points)
 {
 }
 
-FTriangleMesh::FTriangleMesh()
+FGenTriangleMesh::FGenTriangleMesh()
 	: Material(nullptr)
 {
 }

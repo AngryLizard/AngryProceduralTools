@@ -100,7 +100,7 @@ void UDelaunayFillSplineLibrary::GenerateDelaunay(
 	FDelaunayInstanceParams Instances,
 	FDelaunayHoleParams Holes,
 
-	TArray<FTriangleMesh>& Meshes,
+	TArray<FGenTriangleMesh>& Meshes,
 	TArray<FTransform>& Transforms)
 {
 	if (IsValid(Left) && IsValid(Right) && Surface.FillerMaxSize >= SMALL_NUMBER)
@@ -168,7 +168,7 @@ void UDelaunayFillSplineLibrary::GenerateDelaunay(
 		*/
 
 		// Create vertices
-		FTriangleMesh TriangleMesh;
+		FGenTriangleMesh TriangleMesh;
 
 		TriangleMesh.Triangulation.Triangles = Triangulation2D.Triangles;
 		for (const FVector2D& Point : Triangulation2D.Points)
@@ -200,7 +200,7 @@ void UDelaunayFillSplineLibrary::GenerateDelaunay(
 			const FVector VertexPoint = Transform.InverseTransformPosition(VertexLocation);
 			TriangleMesh.Triangulation.Points.Emplace(VertexPoint);
 
-			FTriangleVertex Vertex;
+			FGenTriangleVertex Vertex;
 			const FVector VertexProject = Transform.InverseTransformVectorNoScale(Project);
 			if (Material.ProjectUV)
 			{
@@ -230,7 +230,7 @@ void UDelaunayFillSplineLibrary::GenerateDelaunay(
 
 		// Remove triangles around given hole
 		TArray<int32> Changed;
-		for (FTriangle& Triangle : TriangleMesh.Triangulation.Triangles)
+		for (FGenTriangle& Triangle : TriangleMesh.Triangulation.Triangles)
 		{
 			const FVector A = TriangleMesh.Triangulation.Points[Triangle.Verts[0]];
 			const FVector B = TriangleMesh.Triangulation.Points[Triangle.Verts[1]];
@@ -260,7 +260,7 @@ void UDelaunayFillSplineLibrary::GenerateDelaunay(
 		AdjNormals.SetNum(TriangleMesh.Triangulation.Points.Num());
 		for (int32 Index = 0; Index < TriangleMesh.Triangulation.Triangles.Num(); Index++)
 		{
-			const FTriangle& Triangle = TriangleMesh.Triangulation.Triangles[Index];
+			const FGenTriangle& Triangle = TriangleMesh.Triangulation.Triangles[Index];
 			if (Triangle.Enabled)
 			{
 				const int32 A = Triangle.Verts[0];

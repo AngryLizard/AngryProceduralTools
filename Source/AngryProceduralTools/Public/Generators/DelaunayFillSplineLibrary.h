@@ -114,7 +114,7 @@ public:
 				FDelaunayInstanceParams Instances,
 				FDelaunayHoleParams Holes,
 				
-				TArray<FTriangleMesh>& Meshes,
+				TArray<FGenTriangleMesh>& Meshes,
 				TArray<FTransform>& Transforms);
 
 };

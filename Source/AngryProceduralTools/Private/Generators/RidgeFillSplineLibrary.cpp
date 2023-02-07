@@ -25,7 +25,7 @@ void Generate(
 	const TArray<FRidgeCurvePoint> CurveSamples,
 	const TArray<FRidgeSegmentPoint> SegmentSamples,
 
-	TArray<FTriangleMesh>& Meshes)
+	TArray<FGenTriangleMesh>& Meshes)
 {
 	const int32 CurveNum = CurveSamples.Num();
 	const int32 SegmentNum = SegmentSamples.Num();
@@ -39,7 +39,7 @@ void Generate(
 	const FVector2D Boundary = UProceduralLibrary::ComputeTwinBounds(Left, Right, Project);
 
 	// Go through each curve index
-	FTriangleMesh TriangleMesh;
+	FGenTriangleMesh TriangleMesh;
 	for (int32 CurveIndex = 0; CurveIndex < CurveNum; CurveIndex++)
 	{
 		const FRidgeCurvePoint& CurveSample = CurveSamples[CurveIndex];
@@ -76,7 +76,7 @@ void Generate(
 			const FVector VertexPoint = Transform.InverseTransformPosition(VertexLocation);
 			TriangleMesh.Triangulation.Points.Emplace(VertexPoint);
 
-			FTriangleVertex Vertex;
+			FGenTriangleVertex Vertex;
 			const FVector VertexProject = Transform.InverseTransformVectorNoScale(Project);
 			if (Material.ProjectUV)
 			{
@@ -114,8 +114,8 @@ void Generate(
 			const float AreaR = ((Vertices[C] - Vertices[B]) ^ (Vertices[C] - Vertices[D])).SizeSquared();
 			if (AreaL + AreaR > KINDA_SMALL_NUMBER)
 			{
-				TriangleMesh.Triangulation.Triangles.Emplace(FTriangle(A, B, C));
-				TriangleMesh.Triangulation.Triangles.Emplace(FTriangle(B, D, C));
+				TriangleMesh.Triangulation.Triangles.Emplace(FGenTriangle(A, B, C));
+				TriangleMesh.Triangulation.Triangles.Emplace(FGenTriangle(B, D, C));
 			}
 		}
 	}
@@ -361,7 +361,7 @@ void URidgeFillSplineLibrary::GenerateRidge(
 	FRidgeMaterialParams Material,
 	ERidgeFillSplineType Type,
 
-	TArray<FTriangleMesh>& Meshes)
+	TArray<FGenTriangleMesh>& Meshes)
 {
 	if (IsValid(Left) && IsValid(Right))
 	{

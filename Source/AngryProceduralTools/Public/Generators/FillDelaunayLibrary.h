@@ -67,7 +67,7 @@ public:
 			FFillSurfaceParams Surface,
 			FFillMaterialParams Material,
 
-			TArray<FTriangleMesh>& Meshes);
+			TArray<FGenTriangleMesh>& Meshes);
 };
 
 

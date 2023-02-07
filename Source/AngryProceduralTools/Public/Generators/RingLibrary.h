@@ -64,7 +64,7 @@ public:
 			FRingShapeParams Shape,
 			FRingMaterialParams Material,
 
-			TArray<FTriangleMesh>& Meshes);
+			TArray<FGenTriangleMesh>& Meshes);
 
 };
 

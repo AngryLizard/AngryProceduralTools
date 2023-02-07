@@ -215,15 +215,15 @@ public:
 
 	/** Combine two mesh sections into one */
 	UFUNCTION(BlueprintPure, Category = "Procedural Mesh", Meta = (Keywords = "C++"))
-		static FTriangleMesh CombineMesheSection(const FTriangleMesh& Meshes, const FTriangleMesh& Other);
+		static FGenTriangleMesh CombineMesheSection(const FGenTriangleMesh& Meshes, const FGenTriangleMesh& Other);
 
 	/** Combine two meshes into one */
 	UFUNCTION(BlueprintPure, Category = "Procedural Mesh", Meta = (Keywords = "C++"))
-		static TArray<FTriangleMesh> CombineMeshes(const TArray<FTriangleMesh>& Meshes, const TArray<FTriangleMesh>& Other);
+		static TArray<FGenTriangleMesh> CombineMeshes(const TArray<FGenTriangleMesh>& Meshes, const TArray<FGenTriangleMesh>& Other);
 
 	/** Merge meshes with matching material */
 	UFUNCTION(BlueprintPure, Category = "Procedural Mesh", Meta = (Keywords = "C++"))
-		static TArray<FTriangleMesh> MergeMaterials(const TArray<FTriangleMesh>& Meshes);
+		static TArray<FGenTriangleMesh> MergeMaterials(const TArray<FGenTriangleMesh>& Meshes);
 
 
 	/** Create instanced meshes from transform on randomly sampled instanced meshes */
@@ -237,7 +237,7 @@ public:
 
 	/** Fill mesh sections of procedural mesh */
 	UFUNCTION(BlueprintCallable, Category = "Procedural Mesh", Meta = (Keywords = "C++"))
-		static void ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh, const TArray<FTriangleMesh>& Meshes, bool EnableCollision);
+		static void ApplyToMeshes(UProceduralMeshComponent* ProceduralMesh, const TArray<FGenTriangleMesh>& Meshes, bool EnableCollision);
 
 	/** Destroy spline meshes */
 	UFUNCTION(BlueprintCallable, Category = "Procedural Mesh", Meta = (Keywords = "C++"))

@@ -66,7 +66,7 @@ bool IntersectsTriangle(const FVector& A, const FVector& B, const FVector& C, co
 	return false;
 }
 
-bool IsValidTriangle(const FTransform& Transform, USplineComponent* Spline, const TArray<float>& Distances, const TArray<FTriangleVertex>& Vertices, int32 Core, int32 Anchor, int32 Probe, int32 Last)
+bool IsValidTriangle(const FTransform& Transform, USplineComponent* Spline, const TArray<float>& Distances, const TArray<FGenTriangleVertex>& Vertices, int32 Core, int32 Anchor, int32 Probe, int32 Last)
 {
 	const FVector CoreLocation = Spline->GetLocationAtDistanceAlongSpline(Distances[Core], ESplineCoordinateSpace::World);
 	const FVector AnchorLocation = Spline->GetLocationAtDistanceAlongSpline(Distances[Anchor], ESplineCoordinateSpace::World);
@@ -107,14 +107,14 @@ bool IsValidTriangle(const FTransform& Transform, USplineComponent* Spline, cons
 	return false;
 }
 
-bool BuildConvex(const FTransform& Transform, USplineComponent* Spline, const TArray<float>& Distances, const TArray<FTriangleVertex>& Vertices, int32 From, int32 To, FTriangulation3D& Triangulation, TArray<FConvex>& Convexes)
+bool BuildConvex(const FTransform& Transform, USplineComponent* Spline, const TArray<float>& Distances, const TArray<FGenTriangleVertex>& Vertices, int32 From, int32 To, FTriangulation3D& Triangulation, TArray<FGenConvex>& Convexes)
 {
 	const int32 Num = Distances.Num();
 	int32 Prev = INDEX_NONE;
 
 	const int32 Core = From;
 	int32 Anchor = (Core + 1) % Num;
-	FConvex Convex(Core, Anchor);
+	FGenConvex Convex(Core, Anchor);
 	while (Anchor != To)
 	{
 		// Probe for valid triangle to build
@@ -143,7 +143,7 @@ bool BuildConvex(const FTransform& Transform, USplineComponent* Spline, const TA
 		}
 
 		// Create triangle
-		FTriangle triangle(Anchor, Core, Probe);
+		FGenTriangle triangle(Anchor, Core, Probe);
 		const int32 Index = Triangulation.Triangles.Num();
 
 		// Update last triangle in the linkage
@@ -184,7 +184,7 @@ void UFillDelaunayLibrary::GenerateFill(
 	FFillSurfaceParams Surface,
 	FFillMaterialParams Material,
 
-	TArray<FTriangleMesh>& Meshes)
+	TArray<FGenTriangleMesh>& Meshes)
 {
 	if (IsValid(Spline) && Spline->IsClosedLoop())
 	{
@@ -205,7 +205,7 @@ void UFillDelaunayLibrary::GenerateFill(
 		const FVector2D Boundary = UProceduralLibrary::ComputeBounds(Spline, Project);
 
 		// Create vertices
-		FTriangleMesh TriangleMesh;
+		FGenTriangleMesh TriangleMesh;
 
 		const int32 Num = Distances.Num();
 		for (int32 Index = 0; Index < Num; Index++)
@@ -216,7 +216,7 @@ void UFillDelaunayLibrary::GenerateFill(
 			const FVector VertexPoint = Transform.InverseTransformPosition(VertexLocation);
 			TriangleMesh.Triangulation.Points.Emplace(VertexPoint);
 
-			FTriangleVertex Vertex;
+			FGenTriangleVertex Vertex;
 			const FVector Tangent = Spline->GetTangentAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 			Vertex.Tangent = Transform.InverseTransformVector(Tangent);
 
@@ -243,7 +243,7 @@ void UFillDelaunayLibrary::GenerateFill(
 		}
 
 		// Triangulate space
-		TArray<FConvex> Convexes;
+		TArray<FGenConvex> Convexes;
 		if (!BuildConvex(Transform, Spline, Distances, TriangleMesh.Vertices, 0, Num - 1, TriangleMesh.Triangulation, Convexes))
 		{
 			UE_LOG(AngryProceduralTools, Error, TEXT("Failed building convex mesh."));
@@ -271,7 +271,7 @@ void UFillDelaunayLibrary::GenerateFill(
 			const float TotalDistance = Spline->GetSplineLength();
 
 			// Mirror mesh
-			FTriangleMesh MirrorMesh = TriangleMesh;
+			FGenTriangleMesh MirrorMesh = TriangleMesh;
 			for (int32 Index = 0; Index < Num; Index++)
 			{
 				MirrorMesh.Vertices[Index].Color = Material.Bottom.VertexColor.ToFColor(false);
@@ -283,7 +283,7 @@ void UFillDelaunayLibrary::GenerateFill(
 				MirrorMesh.Vertices[Index].UV = Material.Bottom.Transform(UV, Boundary);
 			}
 
-			for (FTriangle& Triangle : MirrorMesh.Triangulation.Triangles)
+			for (FGenTriangle& Triangle : MirrorMesh.Triangulation.Triangles)
 			{
 				// std::swap(Triangle.Verts[0], Triangle.Verts[1]);
 				const int32 C0 = Triangle.Verts[0];
@@ -299,23 +299,23 @@ void UFillDelaunayLibrary::GenerateFill(
 			Meshes.Emplace(MirrorMesh);
 
 			// Border mesh
-			FTriangleMesh BorderMesh;
+			FGenTriangleMesh BorderMesh;
 			for (int32 Index = 0; Index < Num; Index++)
 			{
 
 				const int32 A = (Index + 0) % Num;
 				const int32 B = (Index + 1) % Num;
 
-				FTriangleVertex AV = TriangleMesh.Vertices[A];
+				FGenTriangleVertex AV = TriangleMesh.Vertices[A];
 				FVector AP = TriangleMesh.Triangulation.Points[A];
 
-				FTriangleVertex BV = TriangleMesh.Vertices[B];
+				FGenTriangleVertex BV = TriangleMesh.Vertices[B];
 				FVector BP = TriangleMesh.Triangulation.Points[B];
 
-				FTriangleVertex CV = MirrorMesh.Vertices[A];
+				FGenTriangleVertex CV = MirrorMesh.Vertices[A];
 				FVector CP = MirrorMesh.Triangulation.Points[A];
 
-				FTriangleVertex DV = MirrorMesh.Vertices[B];
+				FGenTriangleVertex DV = MirrorMesh.Vertices[B];
 				FVector DP = MirrorMesh.Triangulation.Points[B];
 
 				// Compute normals from rim direction and tangent
@@ -352,12 +352,12 @@ void UFillDelaunayLibrary::GenerateFill(
 				const int32 DI = BorderMesh.Triangulation.Points.Emplace(DP);
 				BorderMesh.Vertices.Emplace(DV);
 
-				BorderMesh.Triangulation.Triangles.Emplace(FTriangle(AI, BI, CI));
-				BorderMesh.Triangulation.Triangles.Emplace(FTriangle(BI, DI, CI));
+				BorderMesh.Triangulation.Triangles.Emplace(FGenTriangle(AI, BI, CI));
+				BorderMesh.Triangulation.Triangles.Emplace(FGenTriangle(BI, DI, CI));
 			}
 
 			// Build collision
-			for (const FConvex& Convex : Convexes)
+			for (const FGenConvex& Convex : Convexes)
 			{
 				TArray<FVector> CollisionPoints;
 				for (const int32 Vertex : Convex.Vertices)

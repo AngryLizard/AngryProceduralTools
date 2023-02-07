@@ -14,6 +14,11 @@
 #include "Factories/ExteriorGradient/AssetTypeActions_ExteriorGradient.h"
 #include "Factories/ExteriorGradient/ExteriorGradientThumbnailRenderer.h"
 
+#include "IPlacementModeModule.h"
+
+#include "Actors/WorldPainterLayer.h"
+#include "Actors/WorldPainterBrush.h"
+
 DEFINE_LOG_CATEGORY(AngryProceduralToolsEditor);
 
 #define LOCTEXT_NAMESPACE "FAngryProceduralToolsEditor"
@@ -41,6 +46,10 @@ void FAngryProceduralToolsEditor::StartupModule()
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout("NormalCurve", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FNode_NormalCurve::MakeInstance));
 	PropertyModule.RegisterCustomPropertyTypeLayout("UnitCurve", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FNode_UnitCurve::MakeInstance));
+
+	IPlacementModeModule& PlacementModeModule = IPlacementModeModule::Get();
+	PlacementModeModule.RegisterPlacementCategory(FPlacementCategoryInfo(LOCTEXT("WorldPainter_CategoryName", "World Painter"), "WorldPainter", TEXT("PMWorldPainter"), 69));
+	PlacementModeModule.OnPlacementModeCategoryRefreshed().AddRaw(this, &FAngryProceduralToolsEditor::OnPlacementModeRefresh);
 }
 
 void FAngryProceduralToolsEditor::ShutdownModule()
@@ -54,6 +63,17 @@ void FAngryProceduralToolsEditor::ShutdownModule()
 		IAssetTools& AssetTools = AssetToolsModule.Get();
 		AssetTools.UnregisterAssetTypeActions(AssetTypeActions_PaintGradient->AsShared());
 		AssetTools.UnregisterAssetTypeActions(AssetTypeActions_ExteriorGradient->AsShared());
+	}
+}
+
+void FAngryProceduralToolsEditor::OnPlacementModeRefresh(FName CategoryName)
+{
+	static FName VolumeName = FName(TEXT("WorldPainter"));
+	if (CategoryName == VolumeName)
+	{
+		IPlacementModeModule& PlacementModeModule = IPlacementModeModule::Get();
+		PlacementModeModule.RegisterPlaceableItem(CategoryName, MakeShareable(new FPlaceableItem(nullptr, FAssetData(AWorldPainterLayer::StaticClass()))));
+		PlacementModeModule.RegisterPlaceableItem(CategoryName, MakeShareable(new FPlaceableItem(nullptr, FAssetData(AWorldPainterBrush::StaticClass()))));
 	}
 }
 

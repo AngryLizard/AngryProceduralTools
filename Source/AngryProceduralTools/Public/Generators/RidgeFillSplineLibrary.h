@@ -120,7 +120,7 @@ public:
 			FRidgeMaterialParams Material,
 			ERidgeFillSplineType Type,
 
-			TArray<FTriangleMesh>& Meshes);
+			TArray<FGenTriangleMesh>& Meshes);
 
 };
 

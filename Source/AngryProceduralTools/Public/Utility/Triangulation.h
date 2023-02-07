@@ -6,43 +6,43 @@
 #include "Triangulation.generated.h"
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FTriangleEdge
+struct ANGRYPROCEDURALTOOLS_API FGenTriangleEdge
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FTriangleEdge();
-	FTriangleEdge(int32 T, int32 E);
-	FTriangleEdge(const FTriangleEdge& Other);
+	FGenTriangleEdge();
+	FGenTriangleEdge(int32 T, int32 E);
+	FGenTriangleEdge(const FGenTriangleEdge& Other);
 
 	int32 T;
 	int32 E;
 };
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FConvex
+struct ANGRYPROCEDURALTOOLS_API FGenConvex
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FConvex();
-	FConvex(int32 A, int32 B);
+	FGenConvex();
+	FGenConvex(int32 A, int32 B);
 	
 	TArray<int32> Vertices;
 };
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FTriangle
+struct ANGRYPROCEDURALTOOLS_API FGenTriangle
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	FTriangle();
-	FTriangle(int32 A, int32 B, int32 C);
-	FTriangle(const FTriangle& Other);
+	FGenTriangle();
+	FGenTriangle(int32 A, int32 B, int32 C);
+	FGenTriangle(const FGenTriangle& Other);
 
 	void ClearAdjs();
 	bool HasVertex(int32 Vertex) const;
 	void ReplaceAdj(int32 From, int32 To);
-	int32 OppositeOf(const FTriangle& Other) const;
-	bool IsConnected(const FTriangle& Other) const;
+	int32 OppositeOf(const FGenTriangle& Other) const;
+	bool IsConnected(const FGenTriangle& Other) const;
 
 	int32 Verts[3];
 	int32 Adjs[3];
@@ -56,7 +56,7 @@ struct ANGRYPROCEDURALTOOLS_API FTriangulation
 public:
 
 	UPROPERTY(EditAnywhere, Category = "Procedural Mesh")
-		TArray<FTriangle> Triangles;
+		TArray<FGenTriangle> Triangles;
 
 	void Reparent(const TArray<int32>& TriangleIndices);
 	void ReparentAll();
@@ -90,8 +90,8 @@ public:
 	void Circumcenter(int32 Index, FVector2D& Center, float& Radius) const;
 	bool FixTriangles(int32 MaxIterations);
 
-	FVector ComputeArea(const FTriangle& Triangle) const;
-	FVector InsideCheck(const FTriangle& Triangle, const FVector2D& Point) const;
+	FVector ComputeArea(const FGenTriangle& Triangle) const;
+	FVector InsideCheck(const FGenTriangle& Triangle, const FVector2D& Point) const;
 	int32 FindTriangle(const FVector2D& Point) const;
 
 	int32 CutEdge(int32 TriangleIndex, int32 NeighbourIndex, int32 Edge, int32 PointIndex);
@@ -102,10 +102,10 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FTriangleVertex
+struct ANGRYPROCEDURALTOOLS_API FGenTriangleVertex
 {
 	GENERATED_USTRUCT_BODY()
-		FTriangleVertex();
+		FGenTriangleVertex();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
 		FVector Tangent;
@@ -121,30 +121,30 @@ struct ANGRYPROCEDURALTOOLS_API FTriangleVertex
 };
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FConvexMesh
+struct ANGRYPROCEDURALTOOLS_API FGenConvexMesh
 {
 	GENERATED_USTRUCT_BODY()
-		FConvexMesh();
-	FConvexMesh(const TArray<FVector>& Points);
+		FGenConvexMesh();
+	FGenConvexMesh(const TArray<FVector>& Points);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
 		TArray<FVector> Points;
 };
 
 USTRUCT(BlueprintType)
-struct ANGRYPROCEDURALTOOLS_API FTriangleMesh
+struct ANGRYPROCEDURALTOOLS_API FGenTriangleMesh
 {
 	GENERATED_USTRUCT_BODY()
-		FTriangleMesh();
+		FGenTriangleMesh();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
 		FTriangulation3D Triangulation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
-		TArray<FTriangleVertex> Vertices;
+		TArray<FGenTriangleVertex> Vertices;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
-		TArray<FConvexMesh> Convex;
+		TArray<FGenConvexMesh> Convex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Mesh")
 		UMaterialInterface* Material;

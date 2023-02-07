@@ -28,9 +28,9 @@ void AProceduralActor::OnConstruction(const FTransform& Transform)
 	}
 }
 
-TArray<FTriangleMesh> AProceduralActor::GenerateMesh_Implementation(const FTransform& Transform, int32 LOD) const
+TArray<FGenTriangleMesh> AProceduralActor::GenerateMesh_Implementation(const FTransform& Transform, int32 LOD) const
 {
-	return TArray<FTriangleMesh>();
+	return TArray<FGenTriangleMesh>();
 }
 
 bool AProceduralActor::Generate(int32 LOD)
@@ -38,7 +38,7 @@ bool AProceduralActor::Generate(int32 LOD)
 	FEditorScriptExecutionGuard ScriptGuard;
 
 	const FTransform& Base = ProceduralMesh->GetComponentTransform();
-	const TArray<FTriangleMesh> Meshes = GenerateMesh(Base, LOD);
+	const TArray<FGenTriangleMesh> Meshes = GenerateMesh(Base, LOD);
 	if (Meshes.Num() > 0)
 	{
 		UProceduralLibrary::ApplyToMeshes(ProceduralMesh, Meshes, EnableCollision);
