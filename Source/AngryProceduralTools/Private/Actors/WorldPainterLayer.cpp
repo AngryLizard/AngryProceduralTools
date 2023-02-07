@@ -11,6 +11,7 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Engine/TextureRenderTargetVolume.h"
 #include "Engine/VolumeTexture.h"
+#include "Editor/UnrealEd/Public/Editor.h"
 
 #define INV_SQRTWOPI 0.398942280401f
 
@@ -181,6 +182,14 @@ void AWorldPainterLayer::Bake()
 	if (!GeneratePointsDone) GeneratePoints();
 	if (!GenerateVerticesDone) GenerateVertices();
 	if (!GenerateTextureDone) GenerateTexture();
+	#if WITH_EDITOR
+	if (GEditor) {
+		UWorld* World = GEditor->GetEditorWorldContext().World();
+		if (World) {
+			GEditor->Exec(World, TEXT("r.VT.Flush"));
+		}
+	}
+	#endif // WITH_EDITOR
 }
 
 
