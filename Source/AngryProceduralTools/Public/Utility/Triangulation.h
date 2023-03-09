@@ -1,4 +1,3 @@
- By Salireths.
 
 #pragma once
 
