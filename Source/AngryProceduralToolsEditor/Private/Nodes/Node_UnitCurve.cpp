@@ -1,4 +1,4 @@
-// The Gateway of Angry: Planes of Existence.
+
 
 #include "Nodes/Node_UnitCurve.h"
 #include "Widgets/Input/STextComboBox.h"

@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 
 #include "Nodes/AngryProceduralDetails.h"
 #include "Modules/ModuleManager.h"

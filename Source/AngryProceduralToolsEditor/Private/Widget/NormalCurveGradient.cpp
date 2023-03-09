@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 
 #include "Widget/NormalCurveGradient.h"
 #include "Rendering/DrawElements.h"

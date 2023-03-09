@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 
 #include "Factories/PaintGradient/PaintGradientThumbnailRenderer.h"
 #include "Textures/PaintGradient.h"

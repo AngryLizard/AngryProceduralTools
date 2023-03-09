@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+
 
 #include "Factories/ExteriorGradient/ExteriorGradientFactory.h"
 #include "Textures/ExteriorGradient.h"
