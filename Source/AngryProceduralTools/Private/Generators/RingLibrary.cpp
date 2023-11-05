@@ -1,5 +1,5 @@
 #include "Generators/RingLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 
 FRingShapeParams::FRingShapeParams()
 :	Segments(32),

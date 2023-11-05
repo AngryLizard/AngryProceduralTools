@@ -1,5 +1,5 @@
 #include "Actors/ProceduralActor.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "Generators/ProceduralLibrary.h"
 
 AProceduralActor::AProceduralActor(const FObjectInitializer& ObjectInitializer)

@@ -1,6 +1,6 @@
 #include "Generators/DelaunayFillSplineLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
-#include "Math/Matrix3x3.h"
+#include "ProceduralMeshComponent.h"
+#include "Structures/Matrix3x3.h"
 
 FDelaunaySurfaceParams::FDelaunaySurfaceParams()
 :	UpVector(FVector::UpVector),

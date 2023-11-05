@@ -25,8 +25,10 @@ uint32 FProceduralGradientResource::GetSizeY() const
 	return 256;
 }
 
-void FProceduralGradientResource::InitRHI()
+void FProceduralGradientResource::InitRHI(FRHICommandListBase& RHICmdList)
 {
+	FTextureResource::InitRHI(RHICmdList);
+
 	const uint32 Width = GetSizeX();
 	const uint32 Height = GetSizeY();
 
@@ -55,6 +57,11 @@ void FProceduralGradientResource::InitRHI()
 	FMemory::Memcpy(Data, Owner->DataCache.GetData(), Owner->DataCache.Num() * sizeof(uint32));
 
 	RHIUnlockTexture2D(TextureRHI, 0, false);
+}
+
+void FProceduralGradientResource::ReleaseRHI()
+{
+	FTextureResource::ReleaseRHI();
 }
 
 /** Initializes the texture array resource if needed. */

@@ -1,8 +1,8 @@
 #include "Generators/FillDelaunayLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "AngryProceduralTools.h"
 #include "Utility/TriangleMath.h"
-#include "Math/DiscreteMath.h"
+#include "Libraries/DiscreteMathLibrary.h"
 
 FFillSurfaceParams::FFillSurfaceParams()
 :	UpVector(FVector::UpVector),

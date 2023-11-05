@@ -1,5 +1,5 @@
 #include "Generators/RidgeFillSplineLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 
 FRidgeSurfaceParams::FRidgeSurfaceParams()
 :	UpVector(FVector::UpVector),

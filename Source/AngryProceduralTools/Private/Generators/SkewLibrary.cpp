@@ -1,5 +1,6 @@
 #include "Generators/SkewLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
+#include "PhysicsEngine/BodySetup.h"
 
 FSkewParams::FSkewParams()
 :	Scale(FVector::OneVector),
@@ -32,7 +33,7 @@ int32 GetNewIndexForOldVertIndex(const FMatrix& Transform, int32 MeshVertIndex, 
 		check(UVs.Num() == Vertices.Num());
 
 		// Copy tangents
-		FVector4 TangentX = VertexBuffers.StaticMeshVertexBuffer.VertexTangentX(MeshVertIndex);
+		FVector4 TangentX = FVector4(VertexBuffers.StaticMeshVertexBuffer.VertexTangentX(MeshVertIndex));
 		FProcMeshTangent NewTangent(Transform.TransformVector(TangentX), TangentX.W < 0.f);
 		Tangents.Add(NewTangent);
 		check(Tangents.Num() == Vertices.Num());

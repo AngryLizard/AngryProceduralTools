@@ -1,5 +1,5 @@
 #include "Actors/SplineActor.h"
-#include "Math/DiscreteMath.h"
+#include "Libraries/DiscreteMathLibrary.h"
 
 FSplineSegment::FSplineSegment()
 : StaticMesh(nullptr),
@@ -48,8 +48,8 @@ void ASplineActor::GenerateInstances()
 			continue;
 		}
 
-		const int32 From = UDiscreteMath::PosMod(Segment.From, NumSegments);
-		const int32 To = UDiscreteMath::PosMod(Segment.To, NumSegments);
+		const int32 From = UDiscreteMathLibrary::PosMod(Segment.From, NumSegments);
+		const int32 To = UDiscreteMathLibrary::PosMod(Segment.To, NumSegments);
 
 		// Go along range
 		int32 SplineIndex = From;
@@ -124,8 +124,8 @@ int32 ASplineActor::CountSegments() const
 	int32 Count = 0;
 	for (const FSplineSegment& Segment : Segments)
 	{
-		const int32 From = UDiscreteMath::PosMod(Segment.From, NumSegments);
-		const int32 To = UDiscreteMath::PosMod(Segment.To, NumSegments);
+		const int32 From = UDiscreteMathLibrary::PosMod(Segment.From, NumSegments);
+		const int32 To = UDiscreteMathLibrary::PosMod(Segment.To, NumSegments);
 	}
 	return Count;
 }

@@ -1,5 +1,5 @@
 #include "Generators/ProceduralLibrary.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 
 FProceduralMaterialParams::FProceduralMaterialParams()

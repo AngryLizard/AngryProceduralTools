@@ -24,10 +24,11 @@ public:
 	/** Initializes the texture array resource if needed, and re-initializes if the texture array has been made dirty since the last init. */
 	void UpdateResource();
 
-	/**
-	* Called when the resource is initialized. This is only called by the rendering thread.
-	*/
-	virtual void InitRHI() override;
+	/** Called when the resource is initialized. This is only called by the rendering thread. */
+	virtual void InitRHI(FRHICommandListBase& RHICmdList) override;
+
+	/** Called when the resource is released. This is only called by the rendering thread. */
+	virtual void ReleaseRHI() override;
 
 	/** Returns the width of the texture in pixels. */
 	virtual uint32 GetSizeX() const override;

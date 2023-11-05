@@ -18,9 +18,9 @@
 #include "Engine/StaticMeshActor.h"
 #include "PhysicsEngine/BodySetup.h"
 #include "Dialogs/DlgPickAssetPath.h"
-#include "ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "Actors/ProceduralActor.h"
-#include "EditorScriptingUtilities/Public/EditorLevelLibrary.h"
+#include "EditorLevelLibrary.h"
 #include "Subsystems/EditorActorSubsystem.h"
 #include "AngryProceduralToolsEditor.h"
 
